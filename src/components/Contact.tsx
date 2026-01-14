@@ -80,7 +80,7 @@ const Contact = () => {
                 </a>
               </div>
               <div className="min-w-0 flex-1">
-                <h3 className="text-sm md:text-base font-bold text-foreground mb-1">Call / WhatsApp</h3>
+                <h3 className="text-sm md:text-base font-bold text-foreground mb-1">Call</h3>
                 <div className="flex flex-col gap-1">
                   <a
                     href="tel:+919281468846"
