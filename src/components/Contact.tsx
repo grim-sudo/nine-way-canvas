@@ -53,7 +53,7 @@ const Contact = () => {
             <div className="flex items-center gap-3 md:gap-4">
               <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center flex-shrink-0">
                 <a
-                  href="mailto:info@9waymediasolutions.com"
+                  href="mailto:9waymediasolutions@gmail.com"
                   aria-label="Email"
                   className="flex items-center justify-center w-full h-full"
                 >
