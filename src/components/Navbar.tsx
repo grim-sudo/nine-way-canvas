@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import logo from "@/assets/9waymedia-logo.png";
@@ -9,32 +9,80 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [isOpen, setIsOpen] = useState(false);
+  const navRef = useRef<HTMLElement | null>(null);
 
+  // track whether page is scrolled for visual tweaks
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+    const onScroll = () => setIsScrolled(window.scrollY > 50);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-      const sections = ["home", "about", "vision", "services", "why-choose-us", "founders", "contact"];
-      const current = sections.find((section) => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
+  // compute active section on scroll using visible area (rAF for performance)
+  useEffect(() => {
+    const sectionIds = ["home", "about", "vision", "services", "why-choose-us", "founders", "contact"];
+    let ticking = false;
+
+    const computeActive = () => {
+      ticking = false;
+      let bestId: string | null = null;
+      let maxVisible = 0;
+      const viewportTop = 0;
+      const viewportBottom = window.innerHeight;
+
+      sectionIds.forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const visible = Math.max(0, Math.min(rect.bottom, viewportBottom) - Math.max(rect.top, viewportTop));
+        if (visible > maxVisible) {
+          maxVisible = visible;
+          bestId = id;
         }
-        return false;
       });
-      if (current) setActiveSection(current);
+
+      if (bestId) setActiveSection(bestId);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(computeActive);
+      }
+    };
+
+    // compute once and add listeners
+    computeActive();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
+  // ensure sections have enough top margin for scroll snapping / anchors
+  useEffect(() => {
+    const sectionIds = ["home", "about", "vision", "services", "why-choose-us", "founders", "contact"];
+    const navHeight = navRef.current ? Math.ceil(navRef.current.getBoundingClientRect().height) : 64;
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        // add a small extra offset so the section content isn't hidden under the navbar
+        (el as HTMLElement).style.scrollMarginTop = `${navHeight + 8}px`;
+      }
+    });
   }, []);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
       setIsOpen(false);
+      // immediately mark as active to avoid observer briefly highlighting nearby section
+      setActiveSection(sectionId);
     }
   };
 
@@ -49,6 +97,7 @@ const Navbar = () => {
 
   return (
     <nav
+      ref={(el) => (navRef.current = el)}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-600 bg-black text-white shadow-2xl border-b border-black dark:bg-background/80 dark:backdrop-blur-xl dark:shadow-2xl dark:border-b dark:border-border/50 ${
         isScrolled ? "" : ""
       }`}

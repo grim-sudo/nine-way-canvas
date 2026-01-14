@@ -1,11 +1,32 @@
 import { Instagram, Linkedin, Facebook, Twitter, Mail, Phone } from "lucide-react";
 
+const WhatsAppIcon = (props: any) => (
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <path
+      d="M20.5 3.5A11.9 11.9 0 0012 1C6 1 1.2 5.8 1.2 11.9c0 2.1.6 4.2 1.8 6L1 23l4.4-1.4c1.6.9 3.4 1.3 5.6 1.3 6 0 10.8-4.8 10.8-10.9 0-3-1.2-5.8-3.3-7.5z"
+      stroke="currentColor"
+      strokeWidth="0.9"
+      fill="none"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M15.6 14.6c-.3.2-1 .5-1.4.4-.4-.1-1-.5-1.8-1.2-.8-.7-1.3-1.5-1.5-1.9-.2-.4 0-.6.2-.8.2-.2.4-.5.6-.7.2-.2.1-.4 0-.6-.1-.2-.6-1.3-.8-1.8-.2-.4-.4-.3-.6-.3l-.6.1c-.2 0-.5.2-.7.4-.2.2-.8.8-.8 1.8 0 1 .7 2.1.8 2.3.1.2 1.4 2.3 3.7 3.1 2.4.9 2.8.8 3.2.8.4 0 1-.2 1.3-.6.3-.4.5-.9.5-1.1 0-.2 0-.4-.2-.5-.2-.1-.8-.4-1.1-.6z"
+      fill="currentColor"
+    />
+  </svg>
+);
+
 const Contact = () => {
   const socialLinks = [
     {
       name: "Instagram",
       icon: Instagram,
       url: "https://www.instagram.com/9waymedia?utm_source=ig_web_button_share_sheet&igsh=MWZrd3YxamlzdjJlaQ==",
+    },
+    {
+      name: "WhatsApp",
+      icon: WhatsAppIcon,
+      url: "https://wa.me/919281468846",
     },
     {
       name: "LinkedIn",
@@ -31,7 +52,13 @@ const Contact = () => {
           <div className="p-4 md:p-6 rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-300">
             <div className="flex items-center gap-3 md:gap-4">
               <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center flex-shrink-0">
-                <Mail className="w-5 h-5 md:w-6 md:h-6 text-background" />
+                <a
+                  href="mailto:info@9waymediasolutions.com"
+                  aria-label="Email"
+                  className="flex items-center justify-center w-full h-full"
+                >
+                  <Mail className="w-5 h-5 md:w-6 md:h-6 text-background cursor-pointer" />
+                </a>
               </div>
               <div className="min-w-0 flex-1">
                 <h3 className="text-sm md:text-base font-bold text-foreground mb-1">Email Us</h3>
@@ -48,7 +75,9 @@ const Contact = () => {
           <div className="p-4 md:p-6 rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-300">
             <div className="flex items-center gap-3 md:gap-4">
               <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-secondary to-primary rounded-lg flex items-center justify-center flex-shrink-0">
-                <Phone className="w-5 h-5 md:w-6 md:h-6 text-background" />
+                <a href="tel:+919281468846" aria-label="Call" className="flex items-center justify-center w-full h-full">
+                  <Phone className="w-5 h-5 md:w-6 md:h-6 text-background cursor-pointer" />
+                </a>
               </div>
               <div className="min-w-0 flex-1">
                 <h3 className="text-sm md:text-base font-bold text-foreground mb-1">Call / WhatsApp</h3>
@@ -83,7 +112,13 @@ const Contact = () => {
                 className="p-3 rounded-lg bg-primary/10 hover:bg-primary/20 transition-all duration-300 hover:scale-110 group"
                 aria-label={social.name}
               >
-                <social.icon className="w-6 h-6 text-primary group-hover:text-primary/80" />
+                  <social.icon
+                    className="w-6 h-6 text-primary group-hover:text-primary/80 cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(social.url, "_blank", "noopener,noreferrer");
+                    }}
+                  />
               </a>
             ))}
           </div>
